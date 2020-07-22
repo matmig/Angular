@@ -12,23 +12,24 @@ import { Location } from '@angular/common';
 export class HeroDetailComponent implements OnInit {
   id: number;
   hero: Hero;
-  heroes: Hero[];
   private sub: any;
   constructor(
-    private heroeService: HeroService,
+    private heroService: HeroService,
     private route: ActivatedRoute,
     private _location: Location
   ) {}
 
   ngOnInit(): void {
-    this.heroeService.getHeroes().subscribe((heroes) => (this.heroes = heroes));
     this.sub = this.route.params.subscribe(
       (params) => (this.id = +params['id'])
     );
-    this.hero = this.heroes.find((hero) => hero.id === this.id);
+    this.heroService.getHero(this.id).subscribe((hero) => (this.hero = hero));
   }
   ngOnDestroy() {
     this.sub.unsubscribe();
+  }
+  save() {
+    this.heroService.updateHero(this.hero).subscribe(() => this.goBack());
   }
   goBack() {
     this._location.back();
